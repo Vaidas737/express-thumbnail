@@ -1,0 +1,30 @@
+{
+  "name": "express-thumbnail",
+  "author": "Vaidas Keblys <vkeblys@gmail.com>",
+  "description": "Express framework middleware for creation of thumbnails on the fly",
+  "keywords" : [
+    "thumb",
+    "thumbnail",
+    "image",
+    "middleware"
+  ],
+  "version": "0.1.0",
+  "main": "expressThumbnail.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Vaidas737/express-thumbnail.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Vaidas737/express-thumbnail/issues"
+  },
+  "dependencies": {
+    "gm": "~1.16.*",
+    "mkdirp": "~0.5.*"
+  },
+  "license": [
+    {
+      "type": "MIT",
+      "url": "https://raw.githubusercontent.com/Vaidas737/express-thumbnail/master/LICENSE"
+    }
+  ]
+}
