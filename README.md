@@ -3,6 +3,16 @@
 Express thumbnail is a [Express framework](http://expressjs.com/) middleware for creation of thumbnails on the fly. 
 It automatically creates a thumbnails by adding query parameters onto a image url.
 
+## Install
+  
+    $ npm install express-thumbnail
+
+It depends on [ImageMagick](http://www.imagemagick.org).
+
+Ubuntu
+
+    $ apt-get install imagemagick
+
 ## Examples
 
 ```js
@@ -32,10 +42,3 @@ app.use(expressThumbnail.register(__dirname + '/images'));
 ## Dependencies
 
 ##### [ImageMagick](http://www.imagemagick.org)
-
-Install on Ubuntu
-
-    apt-get install imagemagick
-    
-* [gm](http://aheckmann.github.io/gm)
-* [mkdirp](https://github.com/substack/node-mkdirp)
