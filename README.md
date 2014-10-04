@@ -18,7 +18,7 @@ Ubuntu
 ```js
 var express = require('express');
 var app = express();
-var expressThumbnail = require(__dirname + '/expressThumbnail.js');
+var expressThumbnail = require('express-thumbnail');
 ...
 app.use(expressThumbnail.register(__dirname + '/images'));
 ```
