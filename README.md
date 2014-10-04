@@ -8,7 +8,7 @@ It automatically creates a thumbnails by adding query parameters onto a image ur
 ```js
 var express = require('express');
 var app = express();
-var expressThumbnail = require(__dirname + '/express-thumbnail/expressThumbnail.js');
+var expressThumbnail = require(__dirname + '/expressThumbnail.js');
 ...
 app.use(expressThumbnail.register(__dirname + '/images'));
 ```
