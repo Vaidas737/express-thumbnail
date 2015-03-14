@@ -1,5 +1,7 @@
 # Express Thumbnail
 
+[![express-thumbnail API Documentation](https://www.omniref.com/js/npm/express-thumbnail.png)](https://www.omniref.com/js/npm/express-thumbnail)
+
 Express thumbnail is a [Express framework](http://expressjs.com/) middleware for creation of thumbnails on the fly. 
 It automatically creates a thumbnails by adding query parameters onto a image url.
 
