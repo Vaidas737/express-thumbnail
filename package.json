@@ -2,13 +2,13 @@
   "name": "express-thumbnail",
   "author": "Vaidas Keblys <vkeblys@gmail.com>",
   "description": "Express framework middleware for creation of thumbnails on the fly",
-  "keywords" : [
+  "keywords": [
     "thumb",
     "thumbnail",
     "image",
     "middleware"
   ],
-  "version": "0.1.2",
+  "version": "0.2.0",
   "main": "expressThumbnail.js",
   "repository": {
     "type": "git",
@@ -18,8 +18,14 @@
     "url": "https://github.com/Vaidas737/express-thumbnail/issues"
   },
   "dependencies": {
-    "gm": "~1.16.*",
+    "lwip": "0.0.8",
     "mkdirp": "~0.5.*"
+  },
+  "devDependencies": {
+    "express": "^4.13.3",
+    "grunt": "~0.4.5",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-express-server": "^0.5.1"
   },
   "license": [
     {

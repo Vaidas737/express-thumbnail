@@ -1,19 +1,16 @@
 var fs = require('fs');
 var path = require('path');
 var mkdirp = require('mkdirp');
-var imageMagick = require('gm').subClass({ imageMagick: true });
+var lwip = require('lwip');
 
 var expressThumbnail = module.exports;
 
-// Register middleware.
 expressThumbnail.register = function(rootDir, options) {
 
   rootDir = path.normalize(rootDir);
 
   options = options || {};
-  options.cacheDir = options.cacheDir || path.join(rootDir, '.thumb');       // cache folder, default to {root dir}/.thumb
-  options.quality = options.quality || 80;                                   // compression level, default to 80
-  options.gravity = options.gravity || 'Center';                             // thumbnail gravity, default to Center
+  options.cacheDir = options.cacheDir || path.join(rootDir, '.thumb');       // cache folder, default to [root dir]/.thumb
 
   return function (req, res, next) {
     var filename = decodeURI(req.url.replace(/\?(.*)/, ''));                 // file name in root dir
@@ -21,24 +18,46 @@ expressThumbnail.register = function(rootDir, options) {
     var dimension = req.query.thumb || '';                                   // thumbnail dimensions
     var location = path.join(options.cacheDir, dimension, filename);         // file location in cache
 
-    // send converted file from cache
     function sendConverted() {
       var dimensions = dimension.split('x');
       var convertOptions = {
         filepath: filepath,
         location: location,
         width: dimensions[0],
-        height: dimensions[1],
-        quality: options.quality,
-        gravity: options.gravity
+        height: dimensions[1]
       };
 
-      expressThumbnail.convert(convertOptions, function (err) {
+      convert(convertOptions, function (err) {
         if (err) {
           console.log(err);
           return next();
         }
         return res.sendFile(location);
+      });
+    }
+
+    function createThumbnail(options, callback) {
+      lwip.open(options.filepath, function(err, image) {
+        if (err) { return callback(err); }
+
+        var widthRatio = options.width / image.width();
+        var heightRatio = options.height / image.height();
+        var ratio = Math.max(widthRatio, heightRatio);
+
+        image
+          .batch()
+          .scale(ratio)
+          .crop(+options.width, +options.height)
+          .writeFile(options.location, function (err) {
+            return callback(err);
+          });
+      });
+    }
+
+    function convert(options, callback) {
+      mkdirp(path.dirname(options.location), function(err) {
+        if (err) { return callback(err); }
+        createThumbnail(options, callback);
       });
     }
 
@@ -61,15 +80,4 @@ expressThumbnail.register = function(rootDir, options) {
       });
     });
   };
-};
-
-// Convert the image and store in the cache.
-expressThumbnail.convert = function(options, callback) {
-  mkdirp(path.dirname(options.location), function(err) {
-    if (err) { return callback(err); }
-    var img = imageMagick(options.filepath).gravity(options.gravity);
-    img.thumb(options.width, options.height, options.location, options.quality, function(err, stdout, stderr, command) {
-      return err ? callback(err) : callback(null);
-    });
-  });
 };
