@@ -3,63 +3,42 @@ var path = require('path');
 var mkdirp = require('mkdirp');
 var lwip = require('lwip');
 
-var expressThumbnail = module.exports;
 
-expressThumbnail.register = function(rootDir, options) {
+function convert(location, filepath, width, height, cb) {
+  mkdirp(path.dirname(location), function(err) {
+    if (err) { return cb(err); }
+
+    lwip.open(filepath, function(err, image) {
+      if (err) { return cb(err); }
+
+      var widthRatio = width / image.width();
+      var heightRatio = height / image.height();
+      var ratio = Math.max(widthRatio, heightRatio);
+
+      image
+        .batch()
+        .scale(ratio)
+        .crop(width, height)
+        .writeFile(location, function (err) {
+          return cb(err);
+        });
+    });
+  });
+}
+
+function register(rootDir, options) {
 
   rootDir = path.normalize(rootDir);
 
   options = options || {};
-  options.cacheDir = options.cacheDir || path.join(rootDir, '.thumb');       // cache folder, default to [root dir]/.thumb
+  options.cacheDir = options.cacheDir || path.join(rootDir, '.thumb'); // cache folder, default to [root dir]/.thumb
 
   return function (req, res, next) {
-    var filename = decodeURI(req.url.replace(/\?(.*)/, ''));                 // file name in root dir
-    var filepath = path.join(rootDir, filename);                             // file path
-    var dimension = req.query.thumb || '';                                   // thumbnail dimensions
-    var location = path.join(options.cacheDir, dimension, filename);         // file location in cache
-
-    function sendConverted() {
-      var dimensions = dimension.split('x');
-      var convertOptions = {
-        filepath: filepath,
-        location: location,
-        width: dimensions[0],
-        height: dimensions[1]
-      };
-
-      convert(convertOptions, function (err) {
-        if (err) {
-          console.log(err);
-          return next();
-        }
-        return res.sendFile(location);
-      });
-    }
-
-    function createThumbnail(options, callback) {
-      lwip.open(options.filepath, function(err, image) {
-        if (err) { return callback(err); }
-
-        var widthRatio = options.width / image.width();
-        var heightRatio = options.height / image.height();
-        var ratio = Math.max(widthRatio, heightRatio);
-
-        image
-          .batch()
-          .scale(ratio)
-          .crop(+options.width, +options.height)
-          .writeFile(options.location, function (err) {
-            return callback(err);
-          });
-      });
-    }
-
-    function convert(options, callback) {
-      mkdirp(path.dirname(options.location), function(err) {
-        if (err) { return callback(err); }
-        createThumbnail(options, callback);
-      });
-    }
+    var filename = decodeURI(req.url.replace(/\?(.*)/, ''));
+    var filepath = path.join(rootDir, filename);
+    var dimension = req.query.thumb || '';
+    var dimensions = dimension.split('x');
+    var location = path.join(options.cacheDir, dimension, filename);
 
     fs.stat(filepath, function (err, stats) {
 
@@ -76,8 +55,16 @@ expressThumbnail.register = function(rootDir, options) {
         if (exists) { return res.sendFile(location); }
 
         // convert and send
-        sendConverted();
+        convert(location, filepath, +dimensions[0], +dimensions[1], function (err) {
+          if (err) {
+            console.log(err);
+            return next();
+          }
+          return res.sendFile(location);
+        });
       });
     });
   };
-};
+}
+
+exports.register = register;
