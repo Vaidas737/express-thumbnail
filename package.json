@@ -18,7 +18,7 @@
     "url": "https://github.com/Vaidas737/express-thumbnail/issues"
   },
   "dependencies": {
-    "lwip": "0.0.8",
+    "lwip": "0.0.9",
     "mkdirp": "~0.5.*"
   },
   "devDependencies": {
