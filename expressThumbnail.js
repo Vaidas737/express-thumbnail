@@ -34,7 +34,7 @@ function register(rootDir, options) {
   options.cacheDir = options.cacheDir || path.join(rootDir, '.thumb'); // cache folder, default to [root dir]/.thumb
 
   return function (req, res, next) {
-    var filename = decodeURI(req.url.replace(/\?(.*)/, ''));
+    var filename = path.normalize(decodeURI(req.url.replace(/\?(.*)/, '')));
     var filepath = path.join(rootDir, filename);
     var dimension = req.query.thumb || '';
     var dimensions = dimension.split('x');

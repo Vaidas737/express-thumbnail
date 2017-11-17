@@ -4,3 +4,4 @@ dev/images/.thumb
 node_modules
 test
 dtest.jpg
+package-lock.json
